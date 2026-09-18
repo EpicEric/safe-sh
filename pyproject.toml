@@ -1,0 +1,26 @@
+[project]
+name = "safe-sh"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Eric Rodrigues Pires", email = "eric@eric.dev.br" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "tree-sitter>=0.26.0",
+    "tree-sitter-bash>=0.25.1",
+    "typesafe-sdk>=0.7.0",
+]
+
+[project.scripts]
+safe-sh = "safe_sh:main"
+
+[build-system]
+requires = ["uv_build>=0.12.11,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.16.8",
+]

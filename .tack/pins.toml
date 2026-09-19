@@ -1,0 +1,18 @@
+[tack]
+recomposable = true
+
+[inputs."pyproject.nix"]
+url = "github:pyproject-nix/pyproject.nix"
+type = "fetch"
+
+[inputs.pyproject-build-systems]
+url = "github:pyproject-nix/build-system-pkgs"
+type = "fetch"
+
+[inputs.uv2nix]
+url = "github:pyproject-nix/uv2nix"
+type = "fetch"
+
+[inputs.nixpkgs]
+url = "github:NixOS/nixpkgs/nixpkgs-unstable"
+type = "fetch"

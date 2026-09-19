@@ -1,7 +1,7 @@
 [project]
 name = "safe-sh"
 version = "0.1.0"
-description = "Add your description here"
+description = "Static shell script analysis with Jev"
 readme = "README.md"
 authors = [
     { name = "Eric Rodrigues Pires", email = "eric@eric.dev.br" }

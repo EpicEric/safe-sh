@@ -2,16 +2,23 @@
 
 Static shell script analysis with Jev.
 
+> [!Note]
+> LLM disclaimer: This repo includes minor contributions from large language models, all of them thoroughly reviewed by a human.
+
 ## Usage
 
-Make sure the `TYPESAFE_API_KEY` environment variable is set and that you're in the root directory of this repo.
-
-Replace wherever the script asks for `sh`/`bash` with `uv run safe-sh`. For example:
+Install with `uv`:
 
 ```bash
-curl -fsSL https://malicious.website/install.sh | uv run safe-sh
+uv tool install git+https://github.com/EpicEric/safe-sh
+```
+
+Make sure that the `TYPESAFE_API_KEY` environment variable is set, then replace wherever the script asks for `sh`/`bash` with `safe-sh`. For example:
+
+```bash
+curl -fsSL https://malicious.website/install.sh | safe-sh
 # --- OR ---
-uv run safe-sh -c "$(curl -fsSL https://malicious.website/install.sh)"
+safe-sh -c "$(curl -fsSL https://malicious.website/install.sh)"
 ```
 
 Adjust the warning threshold with `--warn-on` and the error threshold with `--error-on`, or make the logs shorter with `--short`.

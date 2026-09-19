@@ -18,6 +18,7 @@ import argparse
 import asyncio
 import os
 import sys
+import tempfile
 
 import tree_sitter_bash
 from tree_sitter import Language, Parser
@@ -203,21 +204,20 @@ async def run(script: str, warn_on: float, error_on: float, short: bool) -> None
         for key, value in answer.items():
             top_level = len(QUESTIONS[key].criteria) - 1
             score = value.score / top_level
-            if score >= 0.8:
-                log_line = (
-                    f"'{key}' rule detected on lines {start_line}-{end_line}"
-                    if end_line > start_line
-                    else f"'{key}' rule detected on line {start_line}"
-                )
+            if score >= 0.75:
                 if value.confidence >= error_on:
                     chunk_is_safe = False
                     print(
-                        f"[ERROR (p={value.confidence} score={score})] {log_line}",
+                        f"[ERROR (p={value.confidence} score={score})] '{key}' rule violation on lines {start_line}-{end_line}"
+                        if end_line > start_line
+                        else f"[ERROR (p={value.confidence} score={score})] '{key}' rule violation on line {start_line}",
                         file=sys.stderr,
                     )
                 elif value.confidence >= warn_on:
                     print(
-                        f"[WARN  (p={value.confidence} score={score})] {log_line}",
+                        f"[WARN  (p={value.confidence} score={score})] Possible '{key}' rule violation on lines {start_line}-{end_line}"
+                        if end_line > start_line
+                        else f"[WARN  (p={value.confidence} score={score})] Possible '{key}' rule violation on line {start_line}",
                         file=sys.stderr,
                     )
 
@@ -226,23 +226,48 @@ async def run(script: str, warn_on: float, error_on: float, short: bool) -> None
             if not short:
                 for i, line in enumerate(chunk_lines):
                     print(f"  | {start_line + i:>5} | {line}", file=sys.stderr)
-                print()
+                print(file=sys.stderr)
 
         start_line = end_line + 1
 
+    fd, path = tempfile.mkstemp(suffix="-safe-sh.sh")
+    with os.fdopen(fd, "w") as f:
+        f.write(script)
+        f.close()
+
     if errors:
         print(
-            f"{errors} {'errors' if errors > 1 else 'error'} raised. Review the script carefully",
+            f"safe-sh: {errors} {'errors' if errors > 1 else 'error'} raised. Review the script before running carefully:",
             file=sys.stderr,
         )
+        print(file=sys.stderr)
+        print(f"$ less {path}", file=sys.stderr)
         sys.exit(1)
+
+    print("safe-sh: No problems detected.", file=sys.stderr)
+    print(file=sys.stderr)
+    print(
+        "  = DISCLAIMER: be advised that AI can make mistakes, and this",
+        file=sys.stderr,
+    )
+    print(
+        "    script should only be used as a first-line defense mechanism",
+        file=sys.stderr,
+    )
+    print(file=sys.stderr)
+    print(
+        "  = hint: review the script yourself:",
+        file=sys.stderr,
+    )
+    print(file=sys.stderr)
+    print(f"$ less {path}", file=sys.stderr)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(prog="safe-sh")
     parser.add_argument(
         "-c",
-        help="script to analyze",
+        help="inline shell command to analyze",
         type=str,
     )
     parser.add_argument(

